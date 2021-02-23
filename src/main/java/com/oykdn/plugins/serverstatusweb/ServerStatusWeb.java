@@ -1,5 +1,6 @@
 package com.oykdn.plugins.serverstatusweb;
 
+import com.oykdn.plugins.serverstatusweb.handlers.StaticHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.File;
@@ -89,8 +90,11 @@ public final class ServerStatusWeb extends Plugin
             getLogger().warning(ex.getMessage());
         }
 
-        // httpServer.createContext(config.getString("path.static"), new StaticHandler());
-        httpServer.createContext(config.getString("path.api"), new APIHandler());
+        String staticPath = config.getString("path.static");
+        String apiPath = config.getString("path.api");
+
+        httpServer.createContext(staticPath, new StaticHandler(getDataFolder(), staticPath.substring(0, staticPath.length() - 1)));
+        httpServer.createContext(apiPath, new APIHandler(apiPath.substring(0, apiPath.length() - 1)));
 
         ExecutorService executor = new ThreadPoolExecutor(
                 4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<>(100));

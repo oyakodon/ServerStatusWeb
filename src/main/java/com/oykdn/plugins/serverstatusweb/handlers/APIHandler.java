@@ -27,13 +27,16 @@ import java.util.stream.Collectors;
 
 public class APIHandler implements HttpHandler
 {
+    private final String baseUrl;
+
     private final Logger logger;
 
     private final HashMap<String, byte[]> icon_cache = new HashMap<>();
     private final HashMap<String, Function<String, HttpResponse>> routes = new HashMap<>();
 
-    public APIHandler()
+    public APIHandler(String _baseUrl)
     {
+        baseUrl = _baseUrl;
         logger = ProxyServer.getInstance().getLogger();
 
         registerRoutes();
@@ -51,9 +54,9 @@ public class APIHandler implements HttpHandler
     {
         String path = httpExchange.getRequestURI().toString();
 
-        logger.info("REQ: " + path);
+        logger.info("REQ (API): " + path);
 
-        path = path.replace("/api", "");
+        path = path.replace(baseUrl, "");
 
         HttpResponse res = null;
         for(String pattern : routes.keySet())
