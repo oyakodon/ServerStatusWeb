@@ -14,7 +14,7 @@ public class ServerOnlineChecker
         return instance;
     }
 
-    private final HashMap<String, Boolean> serversOnlineStatuses;
+    private final HashMap<String, OnlineState> serversOnlineStatuses;
 
     private ServerOnlineChecker()
     {
@@ -25,14 +25,30 @@ public class ServerOnlineChecker
     {
         for(ServerInfo info : servers)
         {
-            info.ping((result, error) -> serversOnlineStatuses.put(info.getName(), (error == null)));
+            info.ping((result, error) ->
+            {
+                boolean isOnline = (error == null);
+                serversOnlineStatuses.put(info.getName(), new OnlineState(isOnline, isOnline ? result.getVersion().getName() : ""));
+            });
         }
     }
 
-    public boolean getServerOnline(String name)
+    public OnlineState getServerOnline(String name)
     {
-        if (!serversOnlineStatuses.containsKey(name)) return false;
+        if (!serversOnlineStatuses.containsKey(name)) return null;
 
         return serversOnlineStatuses.get(name);
+    }
+
+    public static class OnlineState
+    {
+        public OnlineState(boolean online, String ver)
+        {
+            isOnline = online;
+            version = ver;
+        }
+
+        public boolean isOnline;
+        public String version;
     }
 }

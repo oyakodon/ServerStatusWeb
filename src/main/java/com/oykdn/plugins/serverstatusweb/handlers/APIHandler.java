@@ -86,17 +86,29 @@ public class APIHandler implements HttpHandler
 
     private HttpResponse getServersInfo(String path)
     {
-        ServersStatus status = new ServersStatus();
+        ServerStatuses status = new ServerStatuses();
         status.servers = new ArrayList<>();
 
         for (ServerInfo info : ProxyServer.getInstance().getServers().values())
         {
             ServerStatus s = new ServerStatus();
+            ServerOnlineChecker.OnlineState onlineState = ServerOnlineChecker.getInstance().getServerOnline(info.getName());
+
+            String version = "";
+            if (!onlineState.version.isEmpty())
+            {
+                Matcher m = Pattern.compile("(\\d+\\.\\d+\\.\\d+)").matcher(onlineState.version);
+                if (m.find() && !m.group().isEmpty())
+                {
+                    version = m.group();
+                }
+            }
 
             s.name = info.getName();
             s.playerCount = info.getPlayers().size();
             s.players = info.getPlayers().stream().map(p -> new Player(p.getName())).collect(Collectors.toList());
-            s.online = ServerOnlineChecker.getInstance().getServerOnline(info.getName());
+            s.online = onlineState.isOnline;
+            s.version = version;
             s.description = info.getMotd();
 
             status.servers.add(s);
@@ -152,7 +164,7 @@ public class APIHandler implements HttpHandler
         return res;
     }
 
-    private static class ServersStatus
+    private static class ServerStatuses
     {
         public List<ServerStatus> servers;
     }
@@ -163,6 +175,7 @@ public class APIHandler implements HttpHandler
         public int playerCount;
         public List<Player> players;
         public boolean online;
+        public String version;
         public String description;
     }
 
