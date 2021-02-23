@@ -1,0 +1,4 @@
+name: ServerStatusWeb
+version: ${project.version}
+main: com.oykdn.plugins.serverstatusweb.ServerStatusWeb
+author: Oyakodon

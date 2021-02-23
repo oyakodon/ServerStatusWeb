@@ -1,0 +1,4 @@
+port: 10080
+path:
+  static: /
+  api: /api/
