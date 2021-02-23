@@ -101,6 +101,9 @@ public class StaticHandler implements HttpHandler
                 case "css":
                     type = "text/css";
                     break;
+                case "js":
+                    type = "application/javascript";
+                    break;
                 /* BINARY */
                 case "png":
                     type = "image/png";
