@@ -1,4 +1,6 @@
 port: 10080
-path:
-  static: /
-  api: /api/
+api:
+  path: /api/
+static:
+  enable: true
+  path: /

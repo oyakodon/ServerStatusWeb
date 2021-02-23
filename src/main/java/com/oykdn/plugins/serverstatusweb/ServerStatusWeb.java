@@ -90,10 +90,15 @@ public final class ServerStatusWeb extends Plugin
             getLogger().warning(ex.getMessage());
         }
 
-        String staticPath = config.getString("path.static");
-        String apiPath = config.getString("path.api");
+        String staticPath = config.getString("static.path");
+        boolean useStatic = config.getBoolean("static.enable");
 
-        httpServer.createContext(staticPath, new StaticHandler(getDataFolder(), staticPath.substring(0, staticPath.length() - 1)));
+        String apiPath = config.getString("api.path");
+
+        if (useStatic)
+        {
+            httpServer.createContext(staticPath, new StaticHandler(getDataFolder(), staticPath.substring(0, staticPath.length() - 1)));
+        }
         httpServer.createContext(apiPath, new APIHandler(apiPath.substring(0, apiPath.length() - 1)));
 
         ExecutorService executor = new ThreadPoolExecutor(
